@@ -2,7 +2,7 @@
 
 (defpackage :clustered-intset
   (:use :cl)
-  (:shadow #:delete #:first #:length)
+  (:shadow #:delete #:first #:count)
   (:documentation "Hash based int-set that is slightly more efficient for clustered keys
 such as a set of integer primary key values from a database.
 All keys must be non-negative integers.")
@@ -12,12 +12,12 @@ All keys must be non-negative integers.")
    #:add
    #:advance                            ;advance iterator created by `iterator`.
    #:containsp
+   #:count
    #:delete
    #:first
    #:intset->list
    #:intset->vector
    #:iterator                           ;create iterator from intset
-   #:length
    #:make-intset
    #:map-intset
    #:map-sorted-intset

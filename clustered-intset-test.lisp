@@ -49,12 +49,12 @@
     (is (ci:add 0 iset))
     (is (ci:containsp 0 iset))
     (is (not (ci:add 0 iset)))
-    (is (= 1 (ci:length iset)))
+    (is (= 1 (ci:count iset)))
     (is (not (ci:containsp 1 iset)))
 
     ;; Ensure removal of HT entries representing no members (no 1-bits)
     (is (ci:delete 0 iset))
-    (is (= 0 (ci:length iset)))
+    (is (= 0 (ci:count iset)))
     (is (= 0 (hash-table-count (ci::intset-ht iset))))
     (is (not (ci:containsp 0 iset))))
 
@@ -64,10 +64,10 @@
       (is (ci:add i iset))
       (is (ci:containsp i iset))
       (is (not (ci:add i iset))))
-    (is (= (length +test-vals+) (ci:length iset)))
+    (is (= (length +test-vals+) (ci:count iset)))
     (dolist (i +test-vals+)
       (is (ci:delete i iset)))
-    (is (= 0 (ci:length iset)))))
+    (is (= 0 (ci:count iset)))))
 
 (test map-intset                        ;also intset->list
   (is (equal nil (set-difference '(1 2 3) (ci:intset->list (make-intset 1 2 3)))))
@@ -169,33 +169,55 @@
                                  while v
                                  collect v)))))
     ;; starting-with and ending-with ascending
-    (is (equalp '(60 61 62) 
-                (let ((i (ci:iterator iset :starting-with 60 :ending-with 63)))
+    ;; SBC: starting with 60, ending with 63
+    (is (equalp (list (- +fixnum-bits+ 2) (- +fixnum-bits+ 1) +fixnum-bits+)
+                (let ((i (ci:iterator iset :starting-with (- +fixnum-bits+ 2) 
+                                           :ending-with (+ +fixnum-bits+ 1))))
                   (loop as v = (ci:advance i)
                         while v
                         collect v))))
-    (is (equalp '(60 61 62 63 64 4611686018427387901) 
-                (let ((i (ci:iterator iset :starting-with 60 :ending-with 4611686018427387902)))
-                  (loop as v = (ci:advance i)
-                        while v
-                        collect v))))
+    ;; For sbcl, range is this: '(60 61 62 63 64 4611686018427387901)
+    (let* ((pos (position (- +fixnum-bits+ 2) +test-vals+))
+           (seq (subseq +test-vals+ pos (+ pos 6)))
+           (first (first seq))
+           (last (car (last seq))))
+      (is (= 6 (length seq)))
+      (is (= (- most-positive-fixnum 2) last))
+      (is (equalp seq
+                  (let ((i (ci:iterator iset :starting-with first :ending-with (1+ last))))
+                    (loop as v = (ci:advance i)
+                          while v
+                          collect v)))))
+
     ;; STARTING-WITH value 9223372036854775870 and ENDING-WITH value 9223372036854775870 are 
     ;; incompatible with DESCENDING NIL..
     (signals simple-error (let ((last-val (first (last +test-vals+))))
                             (ci:iterator iset :starting-with last-val :ending-with last-val)))
 
-    ;; starting-with and ending-with descending
-    (is (equalp '(63 62 61)
-                (let ((i (ci:iterator iset :starting-with 63 :ending-with 60 :descending t)))
-                  (loop as v = (ci:advance i)
-                        while v
-                        collect v))))
-    (is (equalp '(4611686018427387902 4611686018427387901 64 63 62 61)
-                (let ((i (ci:iterator iset :starting-with 4611686018427387902 :ending-with 60
-                                      :descending t)))
-                  (loop as v = (ci:advance i)
-                        while v
-                        collect v))))
+    ;; starting-with and ending-with descending.  Sbcl '(63 62 61)
+    (let* ((pos (position (- +fixnum-bits+ 1) +test-vals+))
+           (seq (reverse (subseq +test-vals+ pos (+ pos 3))))
+           (first (first seq))           ;63 on sbcl
+           (last (1- (car (last seq))))) ;60 on sbcl
+      (is (= 3 (length seq)))
+      (is (equalp seq
+                  (let ((i (ci:iterator iset :starting-with first 
+                                             :ending-with last :descending t)))
+                    (loop as v = (ci:advance i)
+                          while v
+                          collect v)))))
+    (let* ((pos (position (- +fixnum-bits+ 1) +test-vals+))
+           (seq (reverse (subseq +test-vals+ pos (+ pos 6))))
+           (first (first seq))
+
+           (last (1- (car (last seq)))))
+      (is (equalp seq
+                  (let ((i (ci:iterator iset :starting-with first :ending-with last
+                                             :descending t)))
+                    (loop as v = (ci:advance i)
+                          while v
+                          collect v)))))
+
     ;; STARTING-WITH value 9223372036854775870 and ENDING-WITH value 9223372036854775870 are 
     ;; incompatible with DESCENDING NIL..
     (signals simple-error (let ((last-val (first (last +test-vals+))))

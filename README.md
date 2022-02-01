@@ -6,13 +6,16 @@ which is moderately well suited for large numbers of clustered key values.
 The implementation uses Common Lisp's hash tables such that multiple set
 members share a hash key and hash value.  This provides us the usual O(logN)
 capabilities of a hash table but reduces the required number of hash table
-entries by two orders of magnitude.  What's more, it uses only fixnums as hash
-table values (regardless of the size of integers in the set membership),
+entries by (for reasonably clustered data) by an order of magnitude.
+Furthermore, it uses only fixnums as hash
+table _values_ (regardless of the size of integers in the set membership),
 thereby minimizing memory allocations.  The net result is that if all your integer set
 members are fixnums, there are no extraneous allocations for references to
 boxed objects from your hash table (related to the intset data, at any rate).
 You can also have intset members which are larger than fixnums. In those cases
-only the hash table key is boxed, not the value.
+only the hash table key is boxed, but not the value.
+
+This release was tested in sbcl 2.1.6 and ABCL 1.8.0.
 
 # More on representation (skip if you don't care).
 

@@ -70,7 +70,7 @@ based on the range, or quantity, of sequence elements."
     (map 'nil #'(lambda (i) (add i intset)) seq)
     intset))
 
-(defun length (intset)
+(defun count (intset)
   "Return the count of integers held by the intset. Named for sequence-like compatibiltiy."
   (declare (type intset intset))
   ;; Requires a traversal of all values, or caching a count.
@@ -236,7 +236,7 @@ VECTOR may be one of:
      `vector-push-extend`.
 
 Note that you can determine the size of the array to preallocate in full by allocating
-`(length intset)` elements.
+`(count intset)` elements.
 
 DIRECTION may be one of: 
 
@@ -245,7 +245,7 @@ DIRECTION may be one of:
   :DESCENDING, which produces intset members in descending order."
   ;; Okay, okay, you got me, it's DWIM programming for no obvious benefit.
   ;; I was trying to appease my future self.
-  (let* ((result (or vector (make-array (length intset))))
+  (let* ((result (or vector (make-array (count intset))))
          (fill-pointer 0)
          (sv-pusher #'(lambda (i) 
                         (setf (svref result fill-pointer) i)
