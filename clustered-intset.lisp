@@ -339,6 +339,9 @@ Returns (values nil nil) or (values next-key value-for-key)."
 (defun first (intset)
   "Return the smallest valued integer in the intset, or NIL if there are no members.
 This is not an efficient implementation, it is O(n)."
+  ;; I'm really on the fence about this function.  I can see it being of interest
+  ;; in some cases, probably in conjunction with a `last` function, outside of the 
+  ;; iteration use case.  
   (declare (type intset intset))
   (multiple-value-bind (ht-key ht-value) 
       (next-ascending-key -1 (intset-ht intset))
@@ -687,6 +690,8 @@ Return the next value, if any, or nil if there isn't any.  Update iterator state
     (:done nil)))
           
 
+;; Stuff considered but not done.
+
 ;; SEQUENCE abstractions
 ;; consider https://shinmera.github.io/trivial-extensible-sequences/
 ;;      and http://www.sbcl.org/manual/#Extensible-Sequences
@@ -699,8 +704,3 @@ Return the next value, if any, or nil if there isn't any.  Update iterator state
 ;; SET abstractions
 ;; subset-p(logand), proper-subset-p intersection(logand), union(logior), 
 ;; difference(logandc2, exclusive-or(logxor)
-
-;; MISC
-;; clear, equal, CTOR taking vector|list,
-;; last & prev (descending sorted traversals)
-;; (rename first to min, last to max)

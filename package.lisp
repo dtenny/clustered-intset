@@ -14,14 +14,14 @@ All keys must be non-negative integers.")
    #:containsp
    #:count
    #:delete
-   #:first
+   #:first                              ;is this worth keeping?
    #:intset->list
    #:intset->vector
    #:iterator                           ;create iterator from intset
    #:make-intset
    #:map-intset
    #:map-sorted-intset
-   #:next                               ;inefficient - no iterator
+   #:next                               ;should probably be deleted - use iterator instead
    #:seq->intset
    ))
                   
