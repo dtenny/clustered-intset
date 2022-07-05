@@ -229,5 +229,3 @@
 (defun run-tests ()
   "Run all :clustered-intset tests."
   (explain! (run 'test-suite)))
-
-

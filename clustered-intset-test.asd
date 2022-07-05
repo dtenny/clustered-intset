@@ -6,7 +6,7 @@
 (in-package :clustered-intset-test-asd)
 
 (defsystem :clustered-intset-test
-  :version "EXPERIMENTAL-1"             ;no semantic versioning yet
+  :version "0.0.1"
   :license "MIT"
   :author "Dave Tenny"
   :description "tests for clustered-intset"

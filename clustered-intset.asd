@@ -6,7 +6,7 @@
 (in-package :clustered-intset-asd)
 
 (defsystem :clustered-intset
-  :version "EXPERIMENTAL-1"             ;no semantic versioning yet
+  :version "0.0.1"
   :license "MIT"
   :author "Dave Tenny"
   :description "Implements a non-negative keyed set of integers favoring clustered keys."

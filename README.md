@@ -17,6 +17,15 @@ only the hash table key is boxed, but not the value.
 
 This release was tested in sbcl 2.1.6 and ABCL 1.8.0.
 
+# To load and run the sample tests
+
+Assuming this has been provided by quicklisp and/or you've modified your
+quicklisp local-projects configuration to refer to the git repo cloned from
+https://github.com/dtenny/clustered-intset.
+
+    (ql:quickload :clustered-intset-test)
+    (clustered-intset-test:run-tests)
+
 # More on representation (skip if you don't care).
 
 When an integer 'k' is added to the set, its hash table key is `(/ k
@@ -31,8 +40,8 @@ single hash table entry.  An abusive example such as a dense value interval
 values being fixnums. 
 
 This implementation isn't designed for additional dense set techniques such as
-compression, but hopefully that's less than horrible, it's fairly simple, and
-benchmarks were satisfactory w.r.t. the primary use case for that modified
+compression. It's fairly simple, and
+benchmarks were satisfactory w.r.t. the primary use-case that motivated
 this implementation. If you need more support for sparse or dense bitsets, see the references
 at the end of this note, in particular [CL-ROARING](https://github.com/dtenny/cl-roaring).
 
@@ -76,8 +85,10 @@ package mentioned above and below, which supports a variety of logical bitmap op
 
 # Performance
 
-In this project is a file, `integer-set-testing.lisp`, that I used for some very simple benchmarking
-of various approaches to integer sets for the use-case volume and key ranges that I required.
+I ran some very simple benchmarks (see `integer-set-testing.lisp`)
+of various approaches to integer sets for the element quantity and key ranges 
+that I required in my use-case.  The benchmark may or may not run for you, it isn't
+something I plan to keep up to date, was just proof of concept stuff for me.
 
 See the lisp file for full details, here's some highlights:
 

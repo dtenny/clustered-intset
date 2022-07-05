@@ -3,6 +3,8 @@
 ;;;    In this test there is a gap approximately every 5th element.
 ;;; 2. Checking for whether the integer set contains values.
 ;;; 3. Doing an ordered traversal of the values in the set.
+;;;
+;;; These numbers were obtained running SBCL 2.1.6 on a Dell XPS 9650 laptop.
 
 ;;; Assumes you have loaded the following into your lisp:
 ;;; cl-roaring (https://github.com/dtenny/cl-roaring)
