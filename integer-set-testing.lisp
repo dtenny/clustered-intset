@@ -98,8 +98,9 @@
   ;;(format t "*** Memory before test~%")
   (my-gc))
 
-(make-test-data 1000000 1000000)        ;1M starting at 1 million
-(make-test-data 1000000 1000000000)     ;1M starting at 1 billion
+;;(make-test-data 1000000 1000000)        ;1M starting at 1 million
+;;(make-test-data 1000000 1000000000)     ;1M starting at 1 billion
+(make-test-data 1000000 MOST-POSITIVE-FIXNUM)
 
 (defun ci-test ()
   (format t "~%*** CLUSTERED-INTSET TEST ***~%")
@@ -113,11 +114,11 @@
                    (hash-table-count (clustered-intset::intset-ht iset)))
            (my-gc)
            ;;(dump-ht (intset-ht iset))
-           (format t "~%*** contains-p~%")
+           (format t "~%*** containsp~%")
            (time (loop for i from *start*
                        with count = 0
                        while (< count *n*)
-                       do (when (clustered-intset:contains-p i iset)
+                       do (when (clustered-intset:containsp i iset)
                             (incf count))))
            (my-gc)
 
@@ -147,6 +148,7 @@
     (pop sb-ext:*after-gc-hooks*)))
       
 
+#+(OR)
 (defun roaring-test ()
   (format t "~%*** CL-ROARING TEST ***~%")
   (my-gc)
@@ -178,7 +180,8 @@
            (cl-roaring:free iset)))
     (pop sb-ext:*after-gc-hooks*)))
 
-(defun numeric-intset-test ()
+#+(OR)
+(defun cl-intset-test ()
   (format t "~%*** CL-INTSET (numbers as int sets) TEST ***~%")
   (my-gc)
   ;;  (push #'(lambda () (print "GC")) sb-ext:*after-gc-hooks*) ; too much I/O for this test...
@@ -188,7 +191,7 @@
            (my-gc)
            (format t "~%*** Load iset from previously created ~d test values~%" *n*)
            (let ((iset (time (cl-intset:list->intset listified-test-vals))))
-             (format t "*** Loaded roaring-bitmap has ~:d entries."
+             (format t "*** Loaded cl-intset has ~:d entries."
                      (cl-intset:size iset))
              (setf listified-test-vals nil)
              (my-gc)
@@ -353,11 +356,11 @@
 
 (setf sb-ext:*after-gc-hooks* nil)
 (dribble "iset-test.out")
-(bit-vector-test)
+;;(bit-vector-test)
 (ht-test)
 (ci-test)
-(roaring-test)
-(numeric-intset-test)
+;;(roaring-test)
+;;(cl-intset-test)
 (fset-test)
 (dribble)
 (setf sb-ext:*after-gc-hooks* nil)

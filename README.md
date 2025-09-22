@@ -28,7 +28,7 @@ https://github.com/dtenny/clustered-intset.
 
 # More on representation (skip if you don't care).
 
-When an integer 'k' is added to the set, its hash table key is `(/ k
+When an integer 'k' is added to the set, its hash table key is `(floor k
 fixnum-bits)`, and its hashtable value is a fixnum used as a bitset for
 members in the range `0 - fixnum-bits` relative to the base `(floor k
 fixnum-bits)`.
